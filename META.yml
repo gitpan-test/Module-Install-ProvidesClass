@@ -1,0 +1,34 @@
+{
+   "no_index" : {
+      "directory" : [
+         "inc",
+         "t"
+      ]
+   },
+   "resources" : {
+      "license" : "http://dev.perl.org/licenses/"
+   },
+   "meta-spec" : {
+      "version" : 1.4,
+      "url" : "http://module-build.sourceforge.net/META-spec-v1.4.html"
+   },
+   "generated_by" : "Module::Install::JSONMETA version 3.000",
+   "distribution_type" : "module",
+   "version" : "0.000001_01",
+   "name" : "Module-Install-ProvidesClass",
+   "author" : [
+      "Ash Berlin C<< <ash@cpan.org> >>"
+   ],
+   "license" : "perl",
+   "module_name" : "Module::Install::ProvidesClass",
+   "requires" : {
+      "inc::Module::Install" : 0.79,
+      "PPI" : 0,
+      "File::Find::Rule" : 0,
+      "perl" : "5.8.8",
+      "ExtUtils::MM_Unix" : 0,
+      "File::Temp" : 0,
+      "File::Find::Rule::Perl" : 0
+   },
+   "abstract" : "provides detection in META.yml for 'class' keyword"
+}
