@@ -12,23 +12,31 @@
       "version" : 1.4,
       "url" : "http://module-build.sourceforge.net/META-spec-v1.4.html"
    },
-   "generated_by" : "Module::Install::JSONMETA version 3.000",
+   "generated_by" : "Module::Install version 0.79 using Module::Install::JSONMETA version 3.000",
    "distribution_type" : "module",
-   "version" : "0.000001_01",
+   "version" : "0.000001",
    "name" : "Module-Install-ProvidesClass",
    "author" : [
       "Ash Berlin C<< <ash@cpan.org> >>"
    ],
    "license" : "perl",
+   "build_requires" : {
+      "Test::Differences" : 0
+   },
+   "provides" : {
+      "Module::Install::ProvidesClass" : {
+         "version" : "0.000001",
+         "file" : "lib/Module/Install/ProvidesClass.pm"
+      }
+   },
    "module_name" : "Module::Install::ProvidesClass",
    "requires" : {
       "inc::Module::Install" : 0.79,
       "PPI" : 0,
       "File::Find::Rule" : 0,
       "perl" : "5.8.8",
-      "ExtUtils::MM_Unix" : 0,
-      "File::Temp" : 0,
-      "File::Find::Rule::Perl" : 0
+      "ExtUtils::MM_Unix" : "6.48",
+      "File::Find::Rule::Perl" : "1.05"
    },
    "abstract" : "provides detection in META.yml for 'class' keyword"
 }
