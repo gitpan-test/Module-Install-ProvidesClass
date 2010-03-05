@@ -1,47 +1,29 @@
-{
-   "no_index" : {
-      "directory" : [
-         "inc",
-         "t"
-      ]
-   },
-   "resources" : {
-      "license" : "http://dev.perl.org/licenses/"
-   },
-   "meta-spec" : {
-      "version" : 1.4,
-      "url" : "http://module-build.sourceforge.net/META-spec-v1.4.html"
-   },
-   "generated_by" : "Module::Install version 0.85 using Module::Install::JSONMETA version 3.000",
-   "distribution_type" : "module",
-   "version" : "0.000001_99",
-   "name" : "Module-Install-ProvidesClass",
-   "author" : [
-      "Ash Berlin C<< <ash@cpan.org> >>"
-   ],
-   "license" : "perl",
-   "build_requires" : {
-      "Test::Differences" : 0,
-      "ExtUtils::MakeMaker" : 6.42,
-      "Moose" : 0
-   },
-   "provides" : {
-      "Module::Install::ProvidesClass" : {
-         "version" : "0.000001_99",
-         "file" : "lib/Module/Install/ProvidesClass.pm"
-      }
-   },
-   "module_name" : "Module::Install::ProvidesClass",
-   "requires" : {
-      "inc::Module::Install" : 0.79,
-      "PPI" : 0,
-      "File::Find::Rule" : 0,
-      "perl" : "5.8.8",
-      "ExtUtils::MM_Unix" : "6.48",
-      "File::Find::Rule::Perl" : "1.05"
-   },
-   "abstract" : "provides detection in META.yml for 'class' keyword",
-   "configure_requires" : {
-      "ExtUtils::MakeMaker" : 6.42
-   }
-}
+---
+abstract: "provides detection in META.yml for 'class' keyword"
+author:
+  - 'Copyright (C) Ash Berlin C<< <ash@cpan.org> >>, 2009-2010.'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+  Moose: 0
+  Test::Differences: 0
+  Test::More: 0.88
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 0.93'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+module_name: Module::Install::ProvidesClass
+name: Module-Install-ProvidesClass
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Class::Discover: 1.000001
+  inc::Module::Install: 0.79
+resources:
+  license: http://dev.perl.org/licenses/
+version: 1.000000

@@ -8,7 +8,7 @@ use Module::Install::Base;
 BEGIN {
   our @ISA = qw(Module::Install::Base);
   our $ISCORE  = 1;
-  our $VERSION = '0.000001_99';
+  our $VERSION = '1.000000';
 }
 
 sub _get_no_index {
@@ -31,102 +31,29 @@ sub _get_dir {
 }
 
 sub auto_provides_class {
-  my ($self) = @_;
+  my ($self, @keywords) = @_;
 
   return $self unless $self->is_admin;
 
-  require File::Find::Rule;
-  require File::Find::Rule::Perl;
-  require PPI;
-  require File::Temp;
-  require ExtUtils::MM_Unix;
+  @keywords = ('class','role') unless @keywords;
+
+  require Class::Discover;
 
   my $no_index = $self->_get_no_index;
 
   my $dir = $self->_get_dir;
 
-  my $rule = File::Find::Rule->new;
-  my @files = $rule->no_index({
-      directory => [ map { "$dir/$_" } @{$no_index->{directory} || []} ],
-      file => [ map { "$dir/$_" } @{$no_index->{file} || []} ],
-  } )->perl_module
-     ->in($dir);
-
-  for (@files) {
-    my $file = $_;
-    s/^\Q$dir\/\E//;
-    $self->_search_for_classes_in_file($file, $_)
-  }
-   
-  return $self;
-}
-
-sub _search_for_classes_in_file {
-  my ($self, $file, $short_file) = @_;
-
-  my $doc = PPI::Document->new($file);
-
-  for ($doc->children) {
-
-    # Tokens can't have children
-    next if $_->isa('PPI::Token');
-    $self->_search_for_classes_in_node($_, "", $short_file)
-  }
-}
-
-sub _search_for_classes_in_node {
-  my ($self, $node, $class_prefix, $file) = @_;
-
-  my $nodes = $node->find(sub {
-      $_[1]->isa('PPI::Token::Word') && $_[1]->content eq 'class' || undef
+  my $classes = Class::Discover->discover_classes({
+    no_index => $no_index,
+    dir => $dir,
+    keywords => \@keywords
   });
-  return $self unless $nodes;
 
-  for my $n (@$nodes) {
-    $n= $n->next_token;
-    # Skip over whitespace
-    $n = $n->next_token while ($n && !$n->significant);
-
-    next unless $n && $n->isa('PPI::Token::Word');
-
-    my $class = $class_prefix . $n->content;
-
-    # Now look for the '{'
-    $n = $n->next_token while ($n && $n->content ne '{' );
-
-    unless ($n) {
-      warn "Unable to find '{' after 'class' somewhere in $file\n";
-      return;
-    }
-
-    $self->provides( $class => { file => $file });
-
-    # $n was the '{' token, its parent is the block/constructor for the 'hash'
-    $n = $n->parent;
-  
-    for ($n->children) {
-
-      # Tokens can't have children
-      next if $_->isa('PPI::Token');
-      $self->_search_for_classes_in_node($_, "${class}::", $file)
-    }
-
-    # I dont fancy duplicating the effort of parsing version numbers. So write
-    # the stuff inside {} to a tmp file and use EUMM to get the version number
-    # from it.
-    my $fh = File::Temp->new;
-    $fh->print($n->content);
-    $fh->close;
-    my $ver = ExtUtils::MM_Unix->parse_version($fh);
-
-    $self->provides->{$class}{version} = $ver if defined $ver && $ver ne "undef";
-
-    # Remove the block from the parent, so that we dont get confused by 
-    # versions of sub-classes
-    $n->parent->remove_child($n);
+  for (@$classes) {
+    my ($class,$info) = each (%$_);
+    delete $info->{type};
+    $self->provides( $class => $info ) 
   }
-
-  return $self;
 }
 
 1;
@@ -148,25 +75,48 @@ Module::Install::ProvidesClass - provides detection in META.yml for 'class' keyw
 
 This class is designed to populate the C<provides> field of META.yml files so
 that the CPAN indexer will pay attention to the existance of your classes,
-rather than blithely ignoring them.
+rather than blithely ignoring them. It does this for Module::Install based
+C<Makefile.PL> files. If you use Module::Build then look at L<Class::Discover>
+which does all the effort of searching for the classes.
+
+=head1 USAGE.
+
+Simply add the following lines to your Makefile.PL before the C<WriteAll;>:
+
+ auto_provides_class;
+
+Its that simple. By default we look for 'class' and 'role' keywords. If you are
+using something that provides packages using a different keyword, such as
+L<CatalystX::Declare> then you can pass a list of keywords to look for to
+C<auto_provides_class>:
+
+ auto_provides_class(qw/
+   class
+   role
+   application
+   controller
+   controller_role
+   view
+   model
+ /);
+
+Make sure you include 'class' and 'role' if you are still using them.
 
 The version parsing is basically the same as what M::I's C<< ->version_form >>
 does, so should hopefully work as well as it does.
 
-Currently we only support 'class' as the keyword to look for. This will
-certainly need changing to be configurable since MooseX::Declare allows C<role>
-as a keyword to create role classes.
-
-This module attempts to be author side only, hopefully it does it correctly, bu
+This module attempts to be author side only, hopefully it does it correctly, but
 Module::Install is scary at times.
 
 =head1 SEE ALSO
 
 L<MooseX::Declare> for the main reason for this module to exist.
 
+L<Class::Discover> for the version extraction logic.
+
 =head1 AUTHOR
 
-Ash Berlin C<< <ash@cpan.org> >>
+Copyright (C) Ash Berlin C<< <ash@cpan.org> >>, 2009-2010.
 
 =head1 LICENSE 
 
